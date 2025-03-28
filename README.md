@@ -3,20 +3,20 @@ ApplePayExpressCheckout is a sample Swift app demonstrating the Apple Pay checko
 
 Features
 
-Simulated Apple Pay transaction flow
+* Simulated Apple Pay transaction flow
 
-Mocked payment credentials
+* Mocked payment credentials
 
-Clean and simple Swift implementation
+* Clean and simple Swift implementation
 
 Requirements
 
-Xcode
+* Xcode
 
-iOS 15+
+* iOS 15+
 
-Swift
+* Swift
 
 Installation
 
-Clone the repository and open the project in Xcode:
+* Clone the repository and open the project in Xcode:
