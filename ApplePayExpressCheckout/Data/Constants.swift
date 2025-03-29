@@ -5,9 +5,9 @@
 
 import SwiftUI
 
-/// App-wide constants
+// App-wide constants
 enum Constants {
-    /// App appearance
+    // App appearance
     enum Theme {
         static let backgroundColor = Color(red: 0.12, green: 0.12, blue: 0.12) // Off-black
         static let accentColor = Color.blue
@@ -16,7 +16,7 @@ enum Constants {
         static let cardColor = Color(red: 0.18, green: 0.18, blue: 0.18)
     }
     
-    /// App metrics
+    // App metrics
     enum Layout {
         static let spacing: CGFloat = 16
         static let cornerRadius: CGFloat = 12
@@ -24,13 +24,13 @@ enum Constants {
         static let cardPadding: CGFloat = 16
     }
     
-    /// Tax information
+    // Tax information
     enum Tax {
         /// Los Angeles, CA Sales Tax Rate (9.5%)
         static let losAngelesSalesTaxRate: Decimal = 0.095
     }
     
-    /// Mock data for the catalog
+    // Mock data for the catalog
     enum MockData {
         static let products = [
             Product(
@@ -42,7 +42,7 @@ enum Constants {
             Product(
                 name: "Nike Dunk Mocha",
                 price: 110.00,
-                description: "You can always count on a classic. The Dunk Low pairs its iconic color blocking with premium materials",
+                description: "You can always count on a classic. The Dunk Low pairs its iconic color blocking with premium materials.",
                 imageName: "sneakers_red"
             ),
             Product(

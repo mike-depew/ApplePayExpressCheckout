@@ -7,7 +7,8 @@
 import SwiftUI
 import PassKit
 
-/// View for displaying the shopping cart and checkout
+// View for displaying the shopping cart and checkout
+
 struct ShoppingCartView: View {
     // MARK: - Properties
     @EnvironmentObject private var cartManager: CartManager
@@ -106,7 +107,7 @@ struct ShoppingCartView: View {
     
     // MARK: - Subviews
     
-    /// Empty cart placeholder view
+    // Empty cart placeholder view
     private var emptyCartView: some View {
         VStack(spacing: 20) {
             Image(systemName: "cart")
@@ -146,7 +147,7 @@ struct ShoppingCartView: View {
         .padding()
     }
     
-    /// List of items in the cart
+    // List of items in the cart
     private var cartItemsList: some View {
         ScrollView {
             LazyVStack(spacing: Constants.Layout.spacing) {
@@ -168,7 +169,7 @@ struct ShoppingCartView: View {
     }
 }
 
-/// Shape for custom rounded corners
+// Shape for custom rounded corners
 struct RoundedCornerShape: Shape {
     var radius: CGFloat = .infinity
     var corners: UIRectCorner = .allCorners
@@ -183,7 +184,7 @@ struct RoundedCornerShape: Shape {
     }
 }
 
-/// Individual row for a cart item
+// Individual row for a cart item
 struct CartItemRow: View {
     // MARK: - Properties
     let item: CartItem

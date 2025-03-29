@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-/// Card view for displaying product information
+// Card view for displaying product information
 struct ProductCard: View {
     // MARK: - Properties
     let product: Product
@@ -114,19 +114,19 @@ struct ProductDetailView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 10) {
                     // Product Image
-                    HStack {
-                        Spacer()
+                    
                         // Load the image from the asset catalog
                         Image(product.imageName)
                             .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 280)
-                            .background(Color.gray.opacity(0.2)) // Add background to see the frame
-                        Spacer()
-                    }
-                    .padding()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 440)
+                            .clipped()
+                            .background(Color.gray.opacity(0.2)) // Add background to make frame visible
+                    
+                  
                     
                     // Product Info
                     VStack(alignment: .leading, spacing: 12) {

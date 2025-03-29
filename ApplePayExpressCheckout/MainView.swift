@@ -1,10 +1,12 @@
 //
 //  MainView.swift
 //  ApplePayExpressCheckout
-//
+
+//  Creatd by Mike Depew.
+
 import SwiftUI
 
-/// The main container view that manages navigation between tabs
+// The main container view that manages navigation between tabs
 struct MainView: View {
     // MARK: - Properties
     @EnvironmentObject private var cartManager: CartManager
@@ -73,7 +75,7 @@ struct MainView: View {
             setupBindings()
         }
         // When showing receipt is toggled off, clean everything up
-        .onChange(of: showReceipt) { newValue in
+        .onChange(of: showReceipt) { oldValue, newValue in
             if !newValue {
                 // If receipt was just dismissed, reset receipt info to prevent it from reappearing
                 self.receiptInfo = nil
@@ -117,7 +119,7 @@ struct MainView_Previews: PreviewProvider {
 extension View {
     /// Alternative to onChange for optional values that might not be Equatable
     func onReceiptInfoChange<T>(_ value: Binding<T?>, perform action: @escaping (T?) -> Void) -> some View {
-        self.onChange(of: value.wrappedValue != nil) { newValue in
+        self.onChange(of: value.wrappedValue != nil) { oldValue, newValue in
             if newValue {
                 action(value.wrappedValue)
             }
