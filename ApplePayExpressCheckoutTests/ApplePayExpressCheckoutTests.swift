@@ -2,16 +2,31 @@
 //  ApplePayExpressCheckoutTests.swift
 //  ApplePayExpressCheckoutTests
 //
-//  Created by Admin on 3/26/25.
-//
+//  Created by Mike Depew.
 
-import Testing
-@testable import ApplePayExpressCheckout
+import XCTest
 
-struct ApplePayExpressCheckoutTests {
+// This test suite acts as an entry point for running all tests
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+// XCTest will run:
+// - CartViewModelTests
+// - ReceiptViewModelTests
+// - ApplePayUtilityTests
+// - ApplePayHandlerTests
+// - TaxCalcluatorTests
+
+// Test class that runs all of our test classes
+final class ApplePayExpressCheckoutTests: XCTestCase {
+    
+    // You could add any common setup/teardown logic here if needed
+    override func setUp() {
+        super.setUp()
+        // Setup for all tests if needed
     }
-
+    
+    override func tearDown() {
+        // Teardown for all tests if needed
+        super.tearDown()
+    }
+ 
 }

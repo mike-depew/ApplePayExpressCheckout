@@ -27,7 +27,7 @@ class ApplePayHandler: NSObject, ApplePayHandling {
     // MARK: - Properties
     weak var delegate: ApplePayHandlerDelegate?
     var paymentAuthorizationController: PKPaymentAuthorizationController?
-    private var paymentCompletion: ((Bool) -> Void)?
+    var paymentCompletion: ((Bool) -> Void)?
     
     // MARK: - Initializer
     override init() {
