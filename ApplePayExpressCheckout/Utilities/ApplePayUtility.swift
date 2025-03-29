@@ -1,24 +1,24 @@
-//
 //  ApplePayUtility.swift
 //  ApplePayExpressCheckout
-//
+//  Created by Mike Depew.
+
 import PassKit
 import Foundation
 
-/// Utility class for Apple Pay operations
+// Utility class for Apple Pay operations
 class ApplePayUtility {
-    /// Checks if Apple Pay is available on the device
+    // Checks if Apple Pay is available on the device
     static func canMakePayments() -> Bool {
         return PKPaymentAuthorizationController.canMakePayments()
     }
     
-    /// Checks if Apple Pay is available with specific networks
+    // Checks if Apple Pay is available with specific networks
     static func canMakePaymentsWithNetworks() -> Bool {
         let networks: [PKPaymentNetwork] = [.visa, .masterCard, .amex]
         return PKPaymentAuthorizationController.canMakePayments(usingNetworks: networks)
     }
     
-    /// Creates a standard payment request for the app
+    // Creates a standard payment request for the app
     static func createPaymentRequest(subtotal: Decimal, tax: Decimal) -> PKPaymentRequest {
         let request = PKPaymentRequest()
         

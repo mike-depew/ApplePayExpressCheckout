@@ -1,15 +1,16 @@
-//
 //  TaxCalculating.swift
 //  ApplePayExpressCheckout
+//  Created by Mike Depew.
+
 import Foundation
 
-/// Protocol defining tax calculation behavior
+// Protocol defining tax calculation behavior
 protocol TaxCalculating {
     func calculateTax(forSubtotal subtotal: Decimal) -> Decimal
     func calculateTotal(forSubtotal subtotal: Decimal) -> Decimal
 }
 
-/// Service to calculate sales tax based on location
+// Service to calculate sales tax based on location
 struct TaxCalculator: TaxCalculating {
     private let taxRate: Decimal
     
@@ -17,16 +18,16 @@ struct TaxCalculator: TaxCalculating {
         self.taxRate = taxRate
     }
     
-    /// Calculates tax amount based on subtotal
-    /// - Parameter subtotal: The pre-tax total
-    /// - Returns: The tax amount
+    // Calculates tax amount based on subtotal
+    // - Parameter subtotal: The pre-tax total
+    // - Returns: The tax amount
     func calculateTax(forSubtotal subtotal: Decimal) -> Decimal {
         return (subtotal * taxRate).rounded(toPlaces: 2)
     }
     
-    /// Calculates the total including tax
-    /// - Parameter subtotal: The pre-tax total
-    /// - Returns: The total amount including tax
+    // Calculates the total including tax
+    // - Parameter subtotal: The pre-tax total
+    // - Returns: The total amount including tax
     func calculateTotal(forSubtotal subtotal: Decimal) -> Decimal {
         let tax = calculateTax(forSubtotal: subtotal)
         return (subtotal + tax).rounded(toPlaces: 2)

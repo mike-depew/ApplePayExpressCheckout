@@ -1,15 +1,15 @@
-//
 //  CartViewModel.swift
 //  ApplePayExpressCheckout
 //
-//  Created by Admin on 3/26/25.
-//
+//  Created by Mike Depew.
+
 import Foundation
 import Combine
 import SwiftUI
-import PassKit  // Explicit import for PassKit
+import PassKit
 
-/// ViewModel to handle cart-related logic
+// ViewModel to handle cart-related logic.
+
 class CartViewModel: ObservableObject {
     // MARK: - Dependencies
     private var cartManager: CartManaging?
@@ -45,28 +45,29 @@ class CartViewModel: ObservableObject {
     
     // MARK: - Public methods
     
-    /// Updates the view model with a cart manager instance
-    /// - Parameter cartManager: The cart manager to use
+    //  Updated the View Model with the cartManager instance.
+    
+    // - Parameter cartManager: The cart manager to use
     func updateWithCartManager(_ cartManager: CartManaging) {
         self.cartManager = cartManager
         setupBindings(with: cartManager)
     }
     
-    /// Updates the quantity of an item in the cart
-    /// - Parameters:
-    ///   - cartItem: The cart item to update
-    ///   - quantity: The new quantity
+    // Updates the quantity of an item in the cart
+    // - Parameters:
+    //   - cartItem: The cart item to update
+    //   - quantity: The new quantity
     func updateQuantity(for cartItem: CartItem, to quantity: Int) {
         cartManager?.updateQuantity(for: cartItem, to: quantity)
     }
     
-    /// Removes an item from the cart
-    /// - Parameter cartItem: The cart item to remove
+    // Removes an item from the cart
+    // - Parameter cartItem: The cart item to remove
     func removeItem(_ cartItem: CartItem) {
         cartManager?.remove(cartItem: cartItem)
     }
     
-    /// Initiates the Apple Pay checkout process
+    // Initiates the Apple Pay checkout process
     func checkout() {
         guard !cartItems.isEmpty, let cartManager = cartManager else { return }
         
@@ -103,14 +104,14 @@ class CartViewModel: ObservableObject {
         }
     }
     
-    /// Checks if Apple Pay is available on the device
+    // Checks if Apple Pay is available on the device
      var isApplePayAvailable: Bool {
          return PKPaymentAuthorizationController.canMakePayments()  // Use PassKit method directly
      }
     
     // MARK: - Private methods
     
-    /// Sets up data bindings for reactive updates
+    // Sets up data bindings for reactive updates
     private func setupBindings(with cartManager: CartManaging) {
         // Cancel any existing subscriptions
         cancellables.removeAll()
@@ -130,7 +131,7 @@ class CartViewModel: ObservableObject {
         self.updateCalculations()
     }
     
-    /// Updates all cart calculations (subtotal, tax, total)
+    // Updates all cart calculations (subtotal, tax, total)
     private func updateCalculations() {
         guard let cartManager = cartManager else { return }
         
@@ -139,7 +140,7 @@ class CartViewModel: ObservableObject {
         self.total = taxCalculator.calculateTotal(forSubtotal: subtotal)
     }
     
-    /// Generates a random confirmation number for orders
+    // Generates a random confirmation number for orders
     private func generateConfirmationNumber() -> String {
         let randomPart = String(format: "%06d", Int.random(in: 100000...999999))
         return "\(Constants.MockData.confirmationPrefix)-\(randomPart)"

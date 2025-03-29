@@ -2,6 +2,7 @@
 //  ProductCard.swift
 //  ApplePayExpressCheckout
 //
+//  Created by Mike Depew.
 
 import SwiftUI
 

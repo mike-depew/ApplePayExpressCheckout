@@ -1,11 +1,13 @@
 //  ReceiptViewModel.swift
 //  ApplePayExpressCheckout
+//  Created by Mike Depew.
 
 import Foundation
 import UIKit
 import SwiftUI
 
-/// ViewModel to handle receipt-related logic
+//  This ViewModel is responsible for handling the transaction receipt logic.
+
 class ReceiptViewModel: ObservableObject {
     // MARK: - Properties
     let receiptInfo: ReceiptInfo
