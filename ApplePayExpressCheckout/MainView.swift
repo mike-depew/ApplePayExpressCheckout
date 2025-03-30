@@ -117,7 +117,7 @@ struct MainView_Previews: PreviewProvider {
 
 // MARK: - View Extension for handling Optional changes
 extension View {
-    /// Alternative to onChange for optional values that might not be Equatable
+    // Alternative to onChange for optional values that might not be Equatable
     func onReceiptInfoChange<T>(_ value: Binding<T?>, perform action: @escaping (T?) -> Void) -> some View {
         self.onChange(of: value.wrappedValue != nil) { oldValue, newValue in
             if newValue {

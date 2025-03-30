@@ -195,11 +195,10 @@ struct CartItemRow: View {
     var body: some View {
         HStack(spacing: 16) {
             // Product Image
-            Image(systemName: item.product.imageName)
+            Image(item.product.imageName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 60, height: 60)
-                .padding(8)
                 .background(Constants.Theme.cardColor)
                 .cornerRadius(Constants.Layout.cornerRadius)
                 .foregroundColor(.white)
