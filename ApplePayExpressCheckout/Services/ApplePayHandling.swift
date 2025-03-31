@@ -1,10 +1,7 @@
-//
-//  ApplePayHandling.swift
+//  ApplePayHandler.swift
 //  ApplePayExpressCheckout
 //
-//  Created by Admin on 3/26/25.
-//
-
+//  Created by Mike Depew.
 
 import Foundation
 import PassKit
@@ -45,7 +42,7 @@ class ApplePayHandler: NSObject, ApplePayHandling {
         let request = PKPaymentRequest()
         
         // Set the merchant identifier from your Apple Developer account
-        request.merchantIdentifier = "merchant.com.yourcompany.swiftpaydemo"
+        request.merchantIdentifier = "merchant.com.yourcompany.applepayexpresscheckout"
         
         // Set the supported networks for the payment
         request.supportedNetworks = [.visa, .masterCard, .amex]
@@ -69,11 +66,14 @@ class ApplePayHandler: NSObject, ApplePayHandling {
         )
         
         let totalItem = PKPaymentSummaryItem(
-            label: "SwiftPay Demo Store",
+            label: "Express Checkout",
             amount: NSDecimalNumber(decimal: subtotal + tax)
         )
         
         request.paymentSummaryItems = [subtotalItem, taxItem, totalItem]
+        
+        // Configure for Apple Pay Later if available
+        configureForApplePayLater(request, amount: subtotal + tax)
         
         return request
     }
@@ -97,15 +97,37 @@ class ApplePayHandler: NSObject, ApplePayHandling {
             }
         }
     }
+    
+    // MARK: - Private Methods
+    
+    /// Configures the payment request for Apple Pay Later
+    /// - Parameters:
+    ///   - request: The payment request to configure
+    ///   - amount: The total purchase amount
+    private func configureForApplePayLater(_ request: PKPaymentRequest, amount: Decimal) {
+        // Check if the amount is eligible for Apple Pay Later
+        if ApplePayLaterService.shared.isApplePayLaterAvailable(for: amount) {
+            // Configure billing and contact fields for Apple Pay Later
+            // Apple Pay Later typically requires these fields
+            request.requiredBillingContactFields = [.postalAddress, .name, .phoneNumber, .emailAddress]
+            request.requiredShippingContactFields = [.postalAddress, .name, .phoneNumber, .emailAddress]
+            
+            // For Apple Pay Later, we need to ensure we have all the appropriate
+            // merchant capabilities, especially supportsCouponCode
+            request.merchantCapabilities = [.threeDSecure, .debit, .credit]
+            
+            // In a real implementation, Apple will automatically display
+            // Apple Pay Later options in the payment sheet if available
+        }
+    }
 }
 
 // MARK: - PKPaymentAuthorizationControllerDelegate
 extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
-    func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, 
-                                        didAuthorizePayment payment: PKPayment, 
+    func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController,
+                                        didAuthorizePayment payment: PKPayment,
                                         handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
-        // For the demo, we'll simulate a successful payment without actual processing
-        // In a real app, you would validate the payment with your payment processor
+
         
         // Simulate a network request with a brief delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

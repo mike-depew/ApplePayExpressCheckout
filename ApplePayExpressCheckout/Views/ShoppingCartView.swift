@@ -8,7 +8,6 @@ import SwiftUI
 import PassKit
 
 // View for displaying the shopping cart and checkout
-
 struct ShoppingCartView: View {
     // MARK: - Properties
     @EnvironmentObject private var cartManager: CartManager
@@ -40,16 +39,17 @@ struct ShoppingCartView: View {
                             total: viewModel.total
                         )
                         
-                        // Apple Pay Button
+                        // Apple Pay Button with Apple Pay Later info
                         ApplePayButton(
                             isEnabled: viewModel.isApplePayAvailable && !viewModel.isProcessingPayment,
                             isLoading: viewModel.isProcessingPayment,
-                            action: viewModel.checkout
-                        )
+                            action: viewModel.checkout,
+                            showApplePayLater: true,
+                            amount: NSDecimalNumber(decimal: viewModel.total).doubleValue                        )
                         .padding()
                     }
                     .background(Constants.Theme.cardColor)
-                    .clipShape(RoundedCornerShape(radius: Constants.Layout.cornerRadius, corners: [.topLeft, .topRight]))
+                    .clipShape(RoundedCorners(radius: Constants.Layout.cornerRadius, corners: [.topLeft, .topRight]))
                 }
             }
         }
@@ -151,128 +151,42 @@ struct ShoppingCartView: View {
     private var cartItemsList: some View {
         ScrollView {
             LazyVStack(spacing: Constants.Layout.spacing) {
+                // Fixed: Access cartItems as an instance property
                 ForEach(viewModel.cartItems) { item in
-                    CartItemRow(
-                        item: item,
-                        onUpdateQuantity: { quantity in
-                            viewModel.updateQuantity(for: item, to: quantity)
-                        },
-                        onRemove: {
-                            viewModel.removeItem(item)
+                    VStack(spacing: 4) {
+                        CartItemRow(
+                            item: item,
+                            onUpdateQuantity: { quantity in
+                                viewModel.updateQuantity(for: item, to: quantity)
+                            },
+                            onRemove: {
+                                viewModel.removeItem(item)
+                            }
+                        )
+                        .padding(.horizontal)
+                        
+                        // Apple Pay Later for individual items if eligible
+                        if ApplePayLaterService.shared.isApplePayLaterAvailable(for: item.subtotal) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "applelogo")
+                                    .font(.caption2)
+                                
+                                Text("Pay Later:")
+                                    .font(.caption2)
+                                    .fontWeight(.medium)
+                                
+                                let installmentAmount = ApplePayLaterService.shared.getMonthlyInstallmentAmount(for: item.subtotal)
+                                Text("\(installmentAmount.asCurrencyString())/mo. for 4 months")
+                                    .font(.caption2)
+                            }
+                            .foregroundColor(Constants.Theme.secondaryTextColor)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 8)
                         }
-                    )
-                    .padding(.horizontal)
+                    }
                 }
             }
             .padding(.vertical)
         }
-    }
-}
-
-// Shape for custom rounded corners
-struct RoundedCornerShape: Shape {
-    var radius: CGFloat = .infinity
-    var corners: UIRectCorner = .allCorners
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
-    }
-}
-
-// Individual row for a cart item
-struct CartItemRow: View {
-    // MARK: - Properties
-    let item: CartItem
-    let onUpdateQuantity: (Int) -> Void
-    let onRemove: () -> Void
-    
-    // MARK: - Body
-    var body: some View {
-        HStack(spacing: 16) {
-            // Product Image
-            Image(item.product.imageName)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 60, height: 60)
-                .background(Constants.Theme.cardColor)
-                .cornerRadius(Constants.Layout.cornerRadius)
-                .foregroundColor(.white)
-            
-            // Product Info
-            VStack(alignment: .leading, spacing: 4) {
-                Text(item.product.name)
-                    .font(.headline)
-                    .foregroundColor(Constants.Theme.textColor)
-                
-                Text(item.product.price.asCurrencyString())
-                    .font(.subheadline)
-                    .foregroundColor(Constants.Theme.accentColor)
-                
-                HStack {
-                    Text("Subtotal: ")
-                        .font(.caption)
-                        .foregroundColor(Constants.Theme.secondaryTextColor)
-                    
-                    Text(item.subtotal.asCurrencyString())
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(Constants.Theme.textColor)
-                }
-            }
-            
-            Spacer()
-            
-            // Quantity Controls
-            VStack(spacing: 8) {
-                QuantitySelector(
-                    quantity: item.quantity,
-                    onIncrement: {
-                        onUpdateQuantity(item.quantity + 1)
-                    },
-                    onDecrement: {
-                        if item.quantity > 1 {
-                            onUpdateQuantity(item.quantity - 1)
-                        } else {
-                            onRemove()
-                        }
-                    }
-                )
-                
-                // Remove Button
-                Button(action: onRemove) {
-                    Text("Remove")
-                        .font(.caption)
-                        .foregroundColor(Color.red.opacity(0.8))
-                }
-            }
-        }
-        .padding()
-        .background(Constants.Theme.backgroundColor.opacity(0.6))
-        .cornerRadius(Constants.Layout.cornerRadius)
-        .overlay(
-            RoundedRectangle(cornerRadius: Constants.Layout.cornerRadius)
-                .stroke(Constants.Theme.cardColor, lineWidth: 1)
-        )
-    }
-}
-
-// MARK: - Preview
-struct ShoppingCartView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            ShoppingCartView(
-                viewModel: CartViewModel(),
-                showReceipt: .constant(false),
-                receiptInfo: .constant(nil)
-            )
-            .navigationTitle("Cart")
-            .environmentObject(CartManager())
-        }
-        .preferredColorScheme(.dark)
     }
 }

@@ -16,6 +16,15 @@ struct ProductCard: View {
     
     @State private var isShowingDetails = false
     
+    // Apple Pay Later display properties
+    private var isApplePayLaterEligible: Bool {
+        return ApplePayLaterService.shared.isApplePayLaterAvailable(for: product.price)
+    }
+    
+    private var installmentAmount: Decimal {
+        return ApplePayLaterService.shared.getMonthlyInstallmentAmount(for: product.price)
+    }
+    
     // MARK: - Body
     var body: some View {
         VStack(alignment: .leading, spacing: 0) { // Remove spacing between elements
@@ -53,6 +62,26 @@ struct ProductCard: View {
                 Text(product.price.asCurrencyString())
                     .font(.subheadline)
                     .foregroundColor(Constants.Theme.accentColor)
+                
+                // Apple Pay Later information if eligible
+                if isApplePayLaterEligible {
+                    HStack(spacing: 4) {
+                        // Apple Pay Logo
+                        Image(systemName: "applelogo")
+                            .font(.caption2)
+                            .foregroundColor(Constants.Theme.textColor)
+                        
+                        Text("Pay Later:")
+                            .font(.caption2)
+                            .fontWeight(.medium)
+                            .foregroundColor(Constants.Theme.textColor)
+                        
+                        Text("From \(installmentAmount.asCurrencyString())/mo.")
+                            .font(.caption2)
+                            .foregroundColor(Constants.Theme.secondaryTextColor)
+                    }
+                    .padding(.vertical, 4)
+                }
                 
                 // Add to Cart Button or Quantity Selector
                 if quantity == 0 {
@@ -100,107 +129,6 @@ struct ProductCard: View {
     }
 }
 
-/// Detail view for a product
-struct ProductDetailView: View {
-    // MARK: - Properties
-    let product: Product
-    let quantity: Int
-    let onAddToCart: () -> Void
-    let onUpdateQuantity: (Int) -> Void
-    
-    @Environment(\.presentationMode) var presentationMode
-    
-    // MARK: - Body
-    var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 10) {
-                    // Product Image
-                    
-                        // Load the image from the asset catalog
-                        Image(product.imageName)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 440)
-                            .clipped()
-                            .background(Color.gray.opacity(0.2)) // Add background to make frame visible
-                    
-                  
-                    
-                    // Product Info
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text(product.name)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(Constants.Theme.textColor)
-                        
-                        Text(product.price.asCurrencyString())
-                            .font(.title2)
-                            .foregroundColor(Constants.Theme.accentColor)
-                        
-                        Text(product.description)
-                            .font(.body)
-                            .foregroundColor(Constants.Theme.secondaryTextColor)
-                            .padding(.top, 4)
-                        
-                        // Add to Cart or Quantity Selector
-                        HStack {
-                            if quantity == 0 {
-                                Button(action: {
-                                    onAddToCart()
-                                    presentationMode.wrappedValue.dismiss()
-                                }) {
-                                    Text("Add to Cart")
-                                        .font(.headline)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.white)
-                                        .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Constants.Theme.accentColor)
-                                        .cornerRadius(Constants.Layout.cornerRadius)
-                                }
-                            } else {
-                                VStack(spacing: 12) {
-                                    Text("In Cart: \(quantity)")
-                                        .font(.headline)
-                                        .foregroundColor(Constants.Theme.secondaryTextColor)
-                                    
-                                    QuantitySelector(
-                                        quantity: quantity,
-                                        onIncrement: {
-                                            onUpdateQuantity(quantity + 1)
-                                        },
-                                        onDecrement: {
-                                            if quantity > 1 {
-                                                onUpdateQuantity(quantity - 1)
-                                            } else {
-                                                onUpdateQuantity(0)
-                                            }
-                                        }
-                                    )
-                                }
-                                .frame(maxWidth: .infinity)
-                            }
-                        }
-                        .padding(.top, 16)
-                    }
-                    .padding()
-                }
-            }
-            .background(Constants.Theme.backgroundColor)
-            .navigationBarTitle("Product Details", displayMode: .inline)
-            .navigationBarItems(trailing: Button(action: {
-                presentationMode.wrappedValue.dismiss()
-            }) {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(Constants.Theme.secondaryTextColor)
-                    .font(.title3)
-            })
-        }
-    }
-}
-
 // MARK: - Preview
 struct ProductCard_Previews: PreviewProvider {
     static var previews: some View {
@@ -227,6 +155,20 @@ struct ProductCard_Previews: PreviewProvider {
                     imageName: "swiftStore_hoodie" // Don't include .jpg here
                 ),
                 quantity: 2,
+                onAddToCart: {},
+                onUpdateQuantity: { _ in }
+            )
+            
+            // Add a preview with a product eligible for Apple Pay Later
+            ProductCard(
+                product: Product(
+                    id: UUID(),
+                    name: "Premium Swift Package",
+                    price: 99.99,
+                    description: "Complete Swift development package with accessories",
+                    imageName: "swiftStore_hoodie"
+                ),
+                quantity: 0,
                 onAddToCart: {},
                 onUpdateQuantity: { _ in }
             )
